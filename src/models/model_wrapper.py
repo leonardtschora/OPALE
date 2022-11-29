@@ -15,8 +15,8 @@ class ModelWrapper(object):
     grid searches.
     """
     def __init__(self, prefix, dataset_name, country="", spliter=None,
-                 predict_two_days=False, known_countries=[], replace_ATC="",
-                 countries_to_predict="not_graph"):
+                 predict_two_days=False, known_countries=[], flow_estimation="",
+                 countries_to_predict="all"):
         self.prefix = prefix
         self.dataset_name = dataset_name
         self.country = country
@@ -37,7 +37,7 @@ class ModelWrapper(object):
         # Specify if we load graph data or not (for transforming edges)
         self.known_countries = known_countries
         self.countries_to_predict_ = countries_to_predict
-        self.replace_ATC = replace_ATC
+        self.replace_ATC = flow_estimation
 
         # For differentiating price and edge labels,
         # will be overwritten for graphs
@@ -348,8 +348,8 @@ class ModelWrapper(object):
 
         # Replace the atcs if specified
         if self.replace_ATC != "":
-            ATC_file = os.path.join(os.environ["OPALE"], "data", "datasets",
-                                    f"F{self.replace_ATC}.csv")
+            ATC_file = os.path.join(os.environ["OPALE"], "data", "Optim",
+                                    f"{self.replace_ATC}.csv")        
             ATCs = pandas.read_csv(ATC_file, index_col="period_start_date")
             ATCs = ATCs.loc[dataset.period_start_date]
             for edge in self.edges_columns:

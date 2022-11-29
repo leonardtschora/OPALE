@@ -13,12 +13,12 @@ from src.models.sampling.samplers import DNN_space, CNN_space
 
 class NeuralNetWrapper(ModelWrapper):
     def __init__(self, prefix, dataset_name, country="", spliter=None,
-                 predict_two_days=False, replace_ATC="",
+                 predict_two_days=False, flow_estimation="",
                  known_countries=["CH", "GB"], countries_to_predict="all"):
         ModelWrapper.__init__(self, prefix, dataset_name, country=country,
                               spliter=spliter, predict_two_days=predict_two_days,
                               known_countries=known_countries,
-                              replace_ATC=replace_ATC,
+                              flow_estimation=flow_estimation,
                               countries_to_predict=countries_to_predict)
         if spliter is None: spliter = MySplitter(0.25)        
         self.spliter = spliter
@@ -97,10 +97,10 @@ class NeuralNetWrapper(ModelWrapper):
 
 class DNNWrapper(NeuralNetWrapper):
     def __init__(self, prefix, dataset_name, country="",
-                 spliter=None, predict_two_days=False, replace_ATC="",
-                 known_countries=["CH", "GB"], countries_to_predict="not_graph"):
+                 spliter=None, predict_two_days=False, flow_estimation="",
+                 known_countries=["CH", "GB"], countries_to_predict="all"):
         NeuralNetWrapper.__init__(self, prefix, dataset_name, country=country,
-                                  spliter=spliter, replace_ATC=replace_ATC,
+                                  spliter=spliter, flow_estimation=flow_estimation,
                                   predict_two_days=predict_two_days,
                                   known_countries=known_countries,
                                   countries_to_predict=countries_to_predict)
@@ -148,12 +148,11 @@ class DNNWrapper(NeuralNetWrapper):
         return DNN_space(n, country, fast=fast, stop_after=stop_after)    
 
 class CNNWrapper(NeuralNetWrapper):
-    def __init__(self, prefix, dataset_name, country="",
+    def __init__(self, prefix, dataset_name, country="", flow_estimation="",
                  spliter=None, predict_two_days=False, W=None, H=24,
-                 replace_ATC="",
-                 known_countries=["CH", "GB"], countries_to_predict="not_graph"):
+                 known_countries=["CH", "GB"], countries_to_predict="all"):
         NeuralNetWrapper.__init__(self, prefix, dataset_name, country=country,
-                                  spliter=spliter,replace_ATC=replace_ATC,
+                                  spliter=spliter, flow_estimation=flow_estimation,
                                   predict_two_days=predict_two_days,
                                   known_countries=known_countries,
                                   countries_to_predict=countries_to_predict)
@@ -177,6 +176,30 @@ class CNNWrapper(NeuralNetWrapper):
              "neurons_per_layer" : (),
         })
         return orig
+
+    def best_params(self, df, for_recalibration=False, acc=False,
+                    filters={}, inverted_filters={}, recompute=True):        
+        df = self.filter_results(copy.deepcopy(df), filters, inverted_filters)
+
+        # Use this specific config for recalibration : other configurations are too
+        # computiationally expensive...
+        best_row = df.seeds.argmax()
+        best_params = df.loc[best_row].to_dict()        
+        print(f"BEST MAE = {round(best_params['maes'], ndigits=2)}")            
+        
+        best_params.pop("file")            
+        best_params.pop("times")            
+        params = self.params()        
+        params.update(best_params)
+        if for_recalibration:
+            if "stop_after" in params.keys():
+                params["stop_after"] = -1
+            params.pop("maes")
+            if acc:
+                params.pop("acc")
+                   
+        return params
+            
 
     def map_dict(self):
         orig = NeuralNetWrapper.map_dict(self)

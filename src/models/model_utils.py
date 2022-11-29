@@ -171,7 +171,7 @@ def run_recalibrate(name, dataset, model, country, n_cpus, start, stop, step,
         filters=filters, inverted_filters=inverted_filters)
     
     # Recalibrate
-    best_params["n_epochs"] = 1
+    #best_params["n_epochs"] = 2
     total_time = model_wrapper.recalibrate_epf(
         seed=best_params["seeds"], ncpus=n_cpus,
         calibration_window=calibration_window, filters=filters,

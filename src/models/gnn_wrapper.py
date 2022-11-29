@@ -13,14 +13,14 @@ from src.models.data_scaler import GNNScaler
 class GNNWrapper(ModelWrapper):
     def __init__(self, prefix, dataset_name, country="",
                  edge_DEBE=True, split_DEAT=True, is_dynamic=False,
-                 replace_ATC="", nodes_per_country=1, spliter=None,
+                 flow_estimation="", nodes_per_country=1, spliter=None,
                  predict_two_days=False, n_out=24, known_countries=["CH", "GB"],
                  countries_to_predict="all"):
         ModelWrapper.__init__(self, prefix, dataset_name, country=country,
                               spliter=spliter, predict_two_days=predict_two_days,
                               known_countries=known_countries,
                               countries_to_predict=countries_to_predict,
-                              replace_ATC=replace_ATC)
+                              flow_estimation=flow_estimation)
         if spliter is None: spliter = MySplitter(0.25)
         self.spliter = spliter
         self.external_spliter = None        

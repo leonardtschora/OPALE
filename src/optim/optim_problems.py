@@ -109,8 +109,12 @@ def load_network_constraints(data, network, model, dims):
     return Az_zprime
 
 def load(name):
+    if name == "F":
+        folder = "datasets"
+    else:
+        folder = "Optim"
     F = pandas.read_csv(
-        os.path.join(os.environ["OPALE"],"data","datasets",f"{name}.csv"))
+        os.path.join(os.environ["OPALE"],"data",folder,f"{name}.csv"))
     F.period_start_date = np.array(
         [datetime.datetime.strptime(td, "%Y-%m-%d").date()
          for td in F.period_start_date])
