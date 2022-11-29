@@ -1,5 +1,5 @@
 # OPALE
-##Optimize &amp; Predict Applied to Leverage European electricity market constraints.
+## Optimize &amp; Predict Applied to Leverage European electricity market constraints.
 
 This repository contains the code used for the experiment and analysis of our paper : Forecasting Electricity Prices: an Optimize then Predict-based approach.
 
@@ -19,4 +19,4 @@ This repository contains the code used for the experiment and analysis of our pa
 - `run_shap_values.py` : Computes shap values for the first 30 days of the test set. Will produce `shap_values.npy` files in the **Shap Values** folder.
 - `run_analysis.py` : Computes metrics, performs DM tests and plots shap values.
 
-We recommend to execute those scripts in the terminal using the python or ipython interpreters, as results are not displayed.
+We recommend to execute those scripts in the terminal using the python or ipython interpreters, as results are not displayed. Moreover, generating flow estimations, grid search, recalibration and shap values is long (several days).
