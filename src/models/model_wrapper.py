@@ -120,8 +120,7 @@ class ModelWrapper(object):
         return mu.test_shape_path(self.prefix, self.dataset_name)
 
     def test_recalibrated_shape_path(self):
-        return mu.test_recalibrated_shape_path(
-            self.prefix, self.dataset_name, self.replace_ATC)
+        return mu.test_recalibrated_shape_path(self.string(), self.replace_ATC)
 
     def _params(self, ptemp):
         p = self.params()
@@ -665,11 +664,12 @@ class ModelWrapper(object):
 
         # Save recalibrated predictions
         test_prevs = pandas.DataFrame(predictions)
-        test_prevs.to_csv(
-            self.test_recalibrated_prediction_path(
-                filters=filters,
-                inverted_filters=inverted_filters),
-            index=False)
+        if n_shap == 0:
+            test_prevs.to_csv(
+                self.test_recalibrated_prediction_path(
+                    filters=filters,
+                    inverted_filters=inverted_filters),
+                index=False)
         if n_shap > 0: np.save(self.test_recalibrated_shape_path(), shaps)
         return total_time
 

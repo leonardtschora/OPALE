@@ -2,7 +2,7 @@ from tensorflow.keras import initializers
 import tensorflow.keras.backend as K
 
 from src.models.model_wrapper import *
-from src.models.Splitter import MySplitter
+from src.models.splitter import MySplitter
 import src.models.parallel_scikit as ps
 
 from sklearn.pipeline import make_pipeline

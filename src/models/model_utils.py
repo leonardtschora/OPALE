@@ -2,8 +2,8 @@ import os, pandas, copy, ast, numpy as np, time
 from ast import literal_eval as make_tuple
 from tensorflow.keras import regularizers
 
-import src.models.Splitter as SPL
-from src.models.Splitter import MySplitter
+import src.models.splitter as SPL
+from src.models.splitter import MySplitter
 import src.models.parallel_scikit as ps
 import src.models.model_utils as mu
 
@@ -171,7 +171,6 @@ def run_recalibrate(name, dataset, model, country, n_cpus, start, stop, step,
         filters=filters, inverted_filters=inverted_filters)
     
     # Recalibrate
-    #best_params["n_epochs"] = 2
     total_time = model_wrapper.recalibrate_epf(
         seed=best_params["seeds"], ncpus=n_cpus,
         calibration_window=calibration_window, filters=filters,
@@ -283,10 +282,13 @@ def test_recalibrated_prediction_path(model, replace_ATC):
 def test_shape_path(prefix, dataset_name):
     return save_path(prefix, dataset_name) + "_test_shape_values.npy"
 
-def test_recalibrated_shape_path(prefix, dataset_name, replace_ATC):
+def test_recalibrated_shape_path(model, replace_ATC):
     if replace_ATC != "":
         replace_ATC = "_" + replace_ATC
-    return save_path(prefix + replace_ATC, dataset_name) + "_test_recalibrated_shape_values.npy"
+        
+    path = os.path.join(os.environ["OPALE"], "data", "Shap Values")
+    return os.path.join(
+        path, model + replace_ATC + "_test_recalibrated_shap_values.npy")
 
 def all_prediction_path(prefix, dataset_name):
     return save_path(prefix, dataset_name) + "_all_predictions.csv"

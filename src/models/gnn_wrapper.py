@@ -5,7 +5,7 @@ from sklearn.compose import TransformedTargetRegressor
 
 from src.models.model_wrapper import *
 from src.models.GNN.gnn import GraphNeuralNetwork
-from src.models.Splitter import MySplitter
+from src.models.splitter import MySplitter
 
 from src.models.sampling.samplers import GNN_space
 from src.models.data_scaler import GNNScaler

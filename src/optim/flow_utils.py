@@ -41,30 +41,3 @@ def map_Flux_versions(v):
     else:
         nvs = "A"
     return nvs
-
-def latex_zone(z):
-    if len(z) == 2:
-        return z
-    else:
-        if "IT" in z:
-            number = z[2:]
-            zone = "IT"
-        else:
-            number = z[-1]
-            zone = z[-3:-1]
-        return zone + "-" + number
-
-def map_version(v):
-    v = v.split("\_")[1]
-    if v in ("atc", "A"): return 0
-    if v == "lin": return 1
-    if v == "lsq": return 2
-    if v == "cmb": return 3
-    if v == "os": return 4
-
-def map_model(m):
-    tm = m.split("\_")[0]
-    if tm == "RF": return 0
-    if "DNN" in tm: return 1
-    if "CNN" in tm: return 2
-    if "GNN" in tm: return 3

@@ -121,10 +121,10 @@ def load(name):
     F.set_index("period_start_date", inplace=True)
     return F
 
-def save_flows(Flin, Flsq, Fcmb, Funi, Flin_test, Flsq_test, Fcmb_test, Funi_test):
-    trains = [Flin, Flsq, Fcmb, Funi]
-    tests = [Flin_test, Flsq_test, Fcmb_test, Funi_test]
-    names= ("Flin", "Flsq", "Fcmb", "Funi")
+def save_flows(Flin, Flsq, Fcmb, Fos, Flin_test, Flsq_test, Fcmb_test, Fos_test):
+    trains = [Flin, Flsq, Fcmb, Fos]
+    tests = [Flin_test, Flsq_test, Fcmb_test, Fos_test]
+    names= ("Flin", "Flsq", "Fcmb", "Fos")
     
     for train, test, name in zip(trains, tests, names):
         res = pandas.concat([train, test])
@@ -262,7 +262,7 @@ def compute_Flsq(f, x0, CD, B, b, network, dims, datesh, data):
     Flsq = pandas.DataFrame(Flsq, index=dates, columns=cols)
     return Flsq
 
-############ Fcmb and Funi
+############ Fcmb and Fos
 ##### Utilities function
 def compute_errors(F, Flin, Flsq, dates):
     dfs = {"Flin" : Flin, "Flsq" : Flsq, "F" : F}
@@ -630,7 +630,7 @@ def compute_Fcmb(Flin, Flsq, rules, dates):
     Fcmb = apply_rules(dfs, info_dfs, rules)  
     return Fcmb
 
-##### Compute Funi
+##### Compute Fos
 def compute_billateral(flux, order, fractions=[0, 0.1, 0.5, 0.75],
                        colors=["c", "b", "m", "r"]):
     x = 21
@@ -706,9 +706,9 @@ def set_unilateral_to_zero(df, unilateral):
             
     return res
 
-def compute_Funi(Fcmb, os_flows):    
-    Funi = set_unilateral_to_zero(Fcmb, os_flows)
-    return Funi
+def compute_Fos(Fcmb, os_flows):    
+    Fos = set_unilateral_to_zero(Fcmb, os_flows)
+    return Fos
 
 ################ Compute on test set and save results
 def compute_test_set(F, rules, os_flows):
@@ -746,12 +746,13 @@ def compute_test_set(F, rules, os_flows):
 
     rules = (info_dfs, rules)
     Fcmb = compute_Fcmb(Flin, Flsq, rules, data[0])
-    Funi = compute_Funi(Fcmb, os_flows)
+    Fos = compute_Fos(Fcmb, os_flows)
 
-    return Az_zprime, Flin, Flsq, Fcmb, Funi, data[0]
+    return Az_zprime, Flin, Flsq, Fcmb, Fos, data[0]
 
 ################ Evaluation
-def compare_flows(Flin, Flsq, F, c1, c2, dfkeys, dates, dates_=None, params={}):
+def compare_flows(Flin, Flsq, F, c1, c2, dfkeys, dates, dates_=None):
+    params = {"fontsize" : 45, "fontsize_labels" : 30, "linewidth" : 5}     
     dfs = {"Flin" : Flin, "Flsq" : Flsq, "F" : F}
     select_dates(dfs, dates)    
     order, edges = compute_order(dfs["Flin"])
@@ -806,8 +807,8 @@ def compare_flows(Flin, Flsq, F, c1, c2, dfkeys, dates, dates_=None, params={}):
         ax.legend(loc="upper right", fontsize=params["fontsize"])
         plt.show()
 
-def compute_errors_test(A, F, Flin, Flsq, Fcmb, Funi, dates):
-    dfs={"A":A, "Flin" : Flin, "Flsq" : Flsq, "F" : F, "Fcmb" : Fcmb,"Funi" : Funi}
+def compute_errors_test(A, F, Flin, Flsq, Fcmb, Fos, dates):
+    dfs={"A":A, "Flin" : Flin, "Flsq" : Flsq, "F" : F, "Fcmb" : Fcmb,"Fos" : Fos}
     select_dates(dfs, dates)
 
     # Compute order, sort, reshape
@@ -829,9 +830,9 @@ def compute_errors_test(A, F, Flin, Flsq, Fcmb, Funi, dates):
         data = res.mean(axis=2).transpose())
     return res_mean
 
-def compute_DM_tests(A, F, Flin_test, Flsq_test, Fcmb_test, Funi_test, dates):
+def compute_DM_tests(A, F, Flin_test, Flsq_test, Fcmb_test, Fos_test, dates):
     dfs={"A":A, "Flin" : Flin_test, "Flsq" : Flsq_test, "F" : F,
-         "Fcmb" : Fcmb_test,"Funi" : Funi_test}
+         "Fcmb" : Fcmb_test,"Fos" : Fos_test}
     select_dates(dfs, dates)
     order, edges = compute_order(dfs["Flin"])
     sort_dfs(dfs, order)

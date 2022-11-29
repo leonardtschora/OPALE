@@ -5,15 +5,15 @@ from src.models.gnn_wrapper import GNNWrapper
 from src.models.model_utils import run
 
 """
-This script produces the forecasts on the test set using recalibration. It will read the best hyper-parameter configuration from the files in 'Grid Search' and then it will train the model using it. ATC in the datasets are replaced by the specified 'flow_estimation' ("" stands for using ATCs). 
+This script produces the shap values for the 30 first days of the test dataset.
 
-This scripts executed in 88h on a 20-cpu machine. Delete some models or increase the 'step' to make it faster.
+This scripts executed in 43h on a 20-cpu machine. Delete some models or lower the 'n_shap' parameter to lower it.
 """
 
 kwargs = {
     # TASKS
     "RECALIBRATE" : True,
-
+    
     # GENERAL PARAMS
     "name" : "TSCHORA",
     "datasets" : ("AllEuropeGNN",),
@@ -39,10 +39,11 @@ kwargs = {
         [GNNWrapper, {"n_cpus" : 1, "flow_estimation" : "Fos"}],
     ),
     
-    # RECALIBRATION PARAMS      
+    # RECALIBRATION PARAMS
+    "n_shap" : 500,
     "start" : 0,
     "step" : 30,
-    "stop" : 731,        
+    "stop" : 30,    
     "calibration_window" : 1440,    
 }
 run(**kwargs)

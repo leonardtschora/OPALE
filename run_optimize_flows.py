@@ -37,29 +37,26 @@ F = load("F")
 errors = compute_errors(F, Flin, Flsq, data[0])
 
 # Inspect results
-params = {"fontsize" : 45, "fontsize_labels" : 30, "linewidth" : 5} 
 compare_flows(Flin, Flsq, F, "FR", "DE", ["Flin", "Flsq", "F"], data[0],
-              dates_=[datetime.date(2019, 8, 12),
-                      datetime.date(2019, 8, 18)], params=params) 
+              dates_=[datetime.date(2019, 8, 12), datetime.date(2019, 8, 18)]) 
 compare_flows(Flin, Flsq, F, "NONO5", "NONO1", ["Flin", "Flsq", "F"], data[0],
-              dates_=[datetime.date(2018, 11, 28),
-                      datetime.date(2018, 12, 4)], params=params) 
+              dates_=[datetime.date(2018, 11, 28), datetime.date(2018, 12, 4)]) 
 
 # Compute Ldiff and select (z, zprime, x, q)
 rules = compute_rules(F, Flin, Flsq, data[0])
 
 # Combine flows
 Fcmb = compute_Fcmb(Flin, Flsq, rules, data[0])
-########################### 4) Compute Funi (5 s)
+########################### 4) Compute Fos (5 s)
 # Identify one sided-flows
 os_flows = one_sided_flows(F, Fcmb, data[0])
 
 # Apply one-sideness
-Funi = compute_Funi(Fcmb, os_flows)
+Fos = compute_Fos(Fcmb, os_flows)
 ########################### 5) Apply to the test set (10h). Uncomment to load
 # Repeat the last 4 steps, but we use the found rules and os_flows
-A,Flin_test,Flsq_test, Fcmb_test,Funi_test,dates=compute_test_set(F,rules,os_flows)
-save_flows(Flin, Flsq, Fcmb, Funi, Flin_test, Flsq_test, Fcmb_test, Funi_test)
+A,Flin_test,Flsq_test, Fcmb_test,Fos_test,dates=compute_test_set(F,rules,os_flows)
+save_flows(Flin, Flsq, Fcmb, Fos, Flin_test, Flsq_test, Fcmb_test, Fos_test)
 
 """
 datesh, data, model, network, dims = load_data("test")
@@ -68,8 +65,8 @@ F = load("F")
 Flin_test = load("Flin")
 Flsq_test = load("Flsq")
 Fcmb_test = load("Fcmb")
-Funi_test = load("Funi")
+Fos_test = load("Fos")
 A = load("A")
 """
-errors=compute_errors_test(A, F, Flin_test, Flsq_test, Fcmb_test, Funi_test, dates)
-pvalues = compute_DM_tests(A, F, Flin_test, Flsq_test, Fcmb_test, Funi_test, dates)
+errors=compute_errors_test(A, F, Flin_test, Flsq_test, Fcmb_test, Fos_test, dates)
+pvalues = compute_DM_tests(A, F, Flin_test, Flsq_test, Fcmb_test, Fos_test, dates)
